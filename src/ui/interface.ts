@@ -334,13 +334,18 @@ export class UI {
 							if (this.dashopen) {
 								return false;
 							}
-
+							// Show cancel icon if the button is either disabled or hidden or noclick
+							if (['disabled', 'hidden', 'noclick'].includes(b.state)) {
+								b.cssTransition('cancelIcon', 500);
+							}
 							const ability = game.activeCreature.abilities[i];
 							// Passive ability icon can cycle between usable abilities
 							if (i == 0) {
+								// Show cancel icon first
+								b.cssTransition('cancelIcon', 500);
 								// Joywin
 								const selectedAbility = this.selectNextAbility();
-
+								// Then show next icon
 								if (selectedAbility > 0) {
 									this.abilitiesButtons.forEach((btn, index) => {
 										if (index === 0) {
@@ -367,8 +372,10 @@ export class UI {
 							if (ability.require() == true && i != 0) {
 								this.selectAbility(i);
 							}
-							// Activate Ability
-							game.activeCreature.abilities[i].use();
+							// Activate Ability - delay use to make cancel and next icon detectable
+							setTimeout(() => {
+								game.activeCreature.abilities[i].use();
+							}, 1000);
 						} else {
 							// Cancel Ability
 							this.closeDash();
